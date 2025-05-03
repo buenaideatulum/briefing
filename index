@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Briefing Aldo's</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        body {
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 16px;
+            background-color: #4a7bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            flex-grow: 1;
+        }
+        .btn:hover {
+            background-color: #3a68e0;
+        }
+        .btn.export {
+            background-color: #9c27b0;
+        }
+        .btn.reset {
+            background-color: #f44336;
+        }
+        .btn.save {
+            background-color: #4CAF50;
+        }
+        .btn.load {
+            background-color: #FF9800;
+        }
+        .form-container {
+            position: relative;
+            margin: 0 auto;
+            width: 100%;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+        }
+        .briefing-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .briefing-table td, .briefing-table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            position: relative;
+        }
+        .briefing-header {
+            background-color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #ddd;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+        .logo-image {
+            font-size: 24px;
+            margin-left: -15px;
+            margin-top: -30px;
+        }
+        .header-right {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .header-title {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: right;
+            border-bottom: 1px dashed #666;
+            padding-bottom: 5px;
+        }
+        .header-fields {
+            display: flex;
+            gap: 20px;
+        }
+        .field-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .field-label {
+            font-weight: bold;
+        }
+        .field-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+        .section-header {
+            background-color: #222;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .meta-row {
+            display: flex;
+            background-color: #f9f9f9;
+        }
+        .meta-item {
+            flex: 1;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #ddd;
+        }
+        .meta-label {
+            font-weight: bold;
+            min-width: 140px;
+        }
+        .meta-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .table-header {
+            background-color: #666;
+            color: white;
+        }
+        .table-row:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .checkbox-cell {
+            text-align: center;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #000;
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+        }
+        .checkbox.checked::after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .checkbox.crossed::after {
+            content: "✗";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: red;
+        }
+        .section-gray {
+            background-color: #666;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .info-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+        }
+        .info-section h3 {
+            margin-bottom: 10px;
+        }
+        .info-section ul {
+            padding-left: 20px;
+        }
+        .info-section li {
+            margin-bottom: 5px;
+        }
+        .hidden {
+            position: absolute;
+            left: -9999px;
+        }
+        @media print {
+            .controls, .info-section {
+                display: none;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+            }
+            body {
+                padding: 0;
+                background: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Formulario Briefing Aldo's</h1>
+        
+        <div class="controls">
+            <button id="exportBtn" class="btn export">Exportar a PNG</button>
+            <button id="printBtn" class="btn">Imprimir</button>
+            <button id="saveBtn" class="btn save">Guardar Datos</button>
+            <button id="loadBtn" class="btn load">Cargar Datos</button>
+            <button id="resetBtn" class="btn reset">Reiniciar</button>
+            <input type="file" id="loadFile" class="hidden">
+        </div>
+        
+        <div id="formContainer" class="form-container">
+            <div class="briefing-header">
+                <div class="header-left">
+                    <div class="logo">aldo's</div>
+                    <div class="logo-image">🍦</div>
+                </div>
+                <div class="header-right">
+                    <div class="header-title">BRIEFING</div>
+                    <div class="header-fields">
+                        <div class="field-group">
+                            <span class="field-label">TIENDA:</span>
+                            <input type="text" class="field-input" id="tienda">
+                        </div>
+                        <div class="field-group">
+                            <span class="field-label">FECHA:</span>
+                            <input type="text" class="field-input" id="fecha" placeholder="  /    /  ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-header">TURNO AM</div>
+            
+            <div class="meta-row">
+                <div class="meta-item">
+                    <span class="meta-label">Meta del turno</span>
+                    <span>$</span>
+                    <input type="text" class="meta-input" id="metaTurnoAM">
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Ticket promedio</span>
+                    <span>$</span>
+                    <input type="text" class="meta-input" id="ticketPromedioAM">
+                </div>
+            </div>
+            
+            <table class="briefing-table">
+                <tr class="table-header">
+                    <th>NOMBRE</th>
+                    <th>ÁREA DE TRABAJO</th>
+                    <th>GORRA</th>
+                    <th>PIN</th>
+                    <th>MANDIL</th>
+                    <th>PLAYERA</th>
+                    <th>TENIS</th>
+                    <th>PANTALÓN</th>
+                    <th>GAFETE</th>
+                </tr>
+                <tr class="table-row" id="am-row-1">
+                    <td><input type="text" class="field-input" id="nombreAM1"></td>
+                    <td><input type="text" class="field-input" id="areaAM1"></td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gorraAM1')" ondblclick="crossCheckbox('gorraAM1')">
+                        <div class="checkbox" id="gorraAM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pinAM1')" ondblclick="crossCheckbox('pinAM1')">
+                        <div class="checkbox" id="pinAM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('mandilAM1')" ondblclick="crossCheckbox('mandilAM1')">
+                        <div class="checkbox" id="mandilAM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('playeraAM1')" ondblclick="crossCheckbox('playeraAM1')">
+                        <div class="checkbox" id="playeraAM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('tenisAM1')" ondblclick="crossCheckbox('tenisAM1')">
+                        <div class="checkbox" id="tenisAM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pantalonAM1')" ondblclick="crossCheckbox('pantalonAM1')">
+                        <div class="checkbox" id="pantalonAM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gafeteAM1')" ondblclick="crossCheckbox('gafeteAM1')">
+                        <div class="checkbox" id="gafeteAM1"></div>
+                    </td>
+                </tr>
+                <tr class="table-row" id="am-row-2">
+                    <td><input type="text" class="field-input" id="nombreAM2"></td>
+                    <td><input type="text" class="field-input" id="areaAM2"></td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gorraAM2')" ondblclick="crossCheckbox('gorraAM2')">
+                        <div class="checkbox" id="gorraAM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pinAM2')" ondblclick="crossCheckbox('pinAM2')">
+                        <div class="checkbox" id="pinAM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('mandilAM2')" ondblclick="crossCheckbox('mandilAM2')">
+                        <div class="checkbox" id="mandilAM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('playeraAM2')" ondblclick="crossCheckbox('playeraAM2')">
+                        <div class="checkbox" id="playeraAM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('tenisAM2')" ondblclick="crossCheckbox('tenisAM2')">
+                        <div class="checkbox" id="tenisAM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pantalonAM2')" ondblclick="crossCheckbox('pantalonAM2')">
+                        <div class="checkbox" id="pantalonAM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gafeteAM2')" ondblclick="crossCheckbox('gafeteAM2')">
+                        <div class="checkbox" id="gafeteAM2"></div>
+                    </td>
+                </tr>
+                <tr class="table-row" id="am-row-3">
+                    <td><input type="text" class="field-input" id="nombreAM3"></td>
+                    <td><input type="text" class="field-input" id="areaAM3"></td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gorraAM3')" ondblclick="crossCheckbox('gorraAM3')">
+                        <div class="checkbox" id="gorraAM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pinAM3')" ondblclick="crossCheckbox('pinAM3')">
+                        <div class="checkbox" id="pinAM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('mandilAM3')" ondblclick="crossCheckbox('mandilAM3')">
+                        <div class="checkbox" id="mandilAM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('playeraAM3')" ondblclick="crossCheckbox('playeraAM3')">
+                        <div class="checkbox" id="playeraAM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('tenisAM3')" ondblclick="crossCheckbox('tenisAM3')">
+                        <div class="checkbox" id="tenisAM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pantalonAM3')" ondblclick="crossCheckbox('pantalonAM3')">
+                        <div class="checkbox" id="pantalonAM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gafeteAM3')" ondblclick="crossCheckbox('gafeteAM3')">
+                        <div class="checkbox" id="gafeteAM3"></div>
+                    </td>
+                </tr>
+                <tr class="table-row" id="am-row-4">
+                    <td><input type="text" class="field-input" id="nombreAM4"></td>
+                    <td><input type="text" class="field-input" id="areaAM4"></td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gorraAM4')" ondblclick="crossCheckbox('gorraAM4')">
+                        <div class="checkbox" id="gorraAM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pinAM4')" ondblclick="crossCheckbox('pinAM4')">
+                        <div class="checkbox" id="pinAM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('mandilAM4')" ondblclick="crossCheckbox('mandilAM4')">
+                        <div class="checkbox" id="mandilAM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('playeraAM4')" ondblclick="crossCheckbox('playeraAM4')">
+                        <div class="checkbox" id="playeraAM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('tenisAM4')" ondblclick="crossCheckbox('tenisAM4')">
+                        <div class="checkbox" id="tenisAM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pantalonAM4')" ondblclick="crossCheckbox('pantalonAM4')">
+                        <div class="checkbox" id="pantalonAM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gafeteAM4')" ondblclick="crossCheckbox('gafeteAM4')">
+                        <div class="checkbox" id="gafeteAM4"></div>
+                    </td>
+                </tr>
+                <tr class="table-row" id="am-row-5">
+                    <td><input type="text" class="field-input" id="nombreAM5"></td>
+                    <td><input type="text" class="field-input" id="areaAM5"></td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gorraAM5')" ondblclick="crossCheckbox('gorraAM5')">
+                        <div class="checkbox" id="gorraAM5"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pinAM5')" ondblclick="crossCheckbox('pinAM5')">
+                        <div class="checkbox" id="pinAM5"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('mandilAM5')" ondblclick="crossCheckbox('mandilAM5')">
+                        <div class="checkbox" id="mandilAM5"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('playeraAM5')" ondblclick="crossCheckbox('playeraAM5')">
+                        <div class="checkbox" id="playeraAM5"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('tenisAM5')" ondblclick="crossCheckbox('tenisAM5')">
+                        <div class="checkbox" id="tenisAM5"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pantalonAM5')" ondblclick="crossCheckbox('pantalonAM5')">
+                        <div class="checkbox" id="pantalonAM5"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gafeteAM5')" ondblclick="crossCheckbox('gafeteAM5')">
+                        <div class="checkbox" id="gafeteAM5"></div>
+                    </td>
+                </tr>
+            </table>
+            
+            <div class="section-gray">TEMAS DE OPERACIÓN</div>
+            <div style="border: 1px solid #ddd; padding: 10px; min-height: 100px;">
+                <textarea style="width: 100%; height: 100px; border: none; resize: none;" id="temasAM"></textarea>
+            </div>
+            
+            <table class="briefing-table">
+                <tr class="table-header">
+                    <th style="width: 50%;">PUSH DE VENTA</th>
+                    <th style="width: 50%;">86 EN TIENDA</th>
+                </tr>
+                <tr>
+                    <td style="height: 80px;">
+                        <textarea style="width: 100%; height: 100%; border: none; resize: none;" id="pushVentaAM"></textarea>
+                    </td>
+                    <td style="height: 80px;">
+                        <textarea style="width: 100%; height: 100%; border: none; resize: none;" id="enTiendaAM"></textarea>
+                    </td>
+                </tr>
+            </table>
+            
+            <div class="section-header">TURNO PM</div>
+            
+            <div class="meta-row">
+                <div class="meta-item">
+                    <span class="meta-label">Meta del turno</span>
+                    <span>$</span>
+                    <input type="text" class="meta-input" id="metaTurnoPM">
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Ticket promedio</span>
+                    <span>$</span>
+                    <input type="text" class="meta-input" id="ticketPromedioPM">
+                </div>
+            </div>
+            
+            <table class="briefing-table">
+                <tr class="table-header">
+                    <th>NOMBRE</th>
+                    <th>ÁREA DE TRABAJO</th>
+                    <th>GORRA</th>
+                    <th>PIN</th>
+                    <th>MANDIL</th>
+                    <th>PLAYERA</th>
+                    <th>TENIS</th>
+                    <th>PANTALÓN</th>
+                    <th>GAFETE</th>
+                </tr>
+                <!-- PM rows 1-10 -->
+                <tr class="table-row" id="pm-row-1">
+                    <td><input type="text" class="field-input" id="nombrePM1"></td>
+                    <td><input type="text" class="field-input" id="areaPM1"></td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gorraPM1')" ondblclick="crossCheckbox('gorraPM1')">
+                        <div class="checkbox" id="gorraPM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pinPM1')" ondblclick="crossCheckbox('pinPM1')">
+                        <div class="checkbox" id="pinPM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('mandilPM1')" ondblclick="crossCheckbox('mandilPM1')">
+                        <div class="checkbox" id="mandilPM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('playeraPM1')" ondblclick="crossCheckbox('playeraPM1')">
+                        <div class="checkbox" id="playeraPM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('tenisPM1')" ondblclick="crossCheckbox('tenisPM1')">
+                        <div class="checkbox" id="tenisPM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pantalonPM1')" ondblclick="crossCheckbox('pantalonPM1')">
+                        <div class="checkbox" id="pantalonPM1"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gafetePM1')" ondblclick="crossCheckbox('gafetePM1')">
+                        <div class="checkbox" id="gafetePM1"></div>
+                    </td>
+                </tr>
+                <!-- Rows 2-10 follow the same pattern -->
+                <tr class="table-row" id="pm-row-2">
+                    <td><input type="text" class="field-input" id="nombrePM2"></td>
+                    <td><input type="text" class="field-input" id="areaPM2"></td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gorraPM2')" ondblclick="crossCheckbox('gorraPM2')">
+                        <div class="checkbox" id="gorraPM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pinPM2')" ondblclick="crossCheckbox('pinPM2')">
+                        <div class="checkbox" id="pinPM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('mandilPM2')" ondblclick="crossCheckbox('mandilPM2')">
+                        <div class="checkbox" id="mandilPM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('playeraPM2')" ondblclick="crossCheckbox('playeraPM2')">
+                        <div class="checkbox" id="playeraPM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('tenisPM2')" ondblclick="crossCheckbox('tenisPM2')">
+                        <div class="checkbox" id="tenisPM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pantalonPM2')" ondblclick="crossCheckbox('pantalonPM2')">
+                        <div class="checkbox" id="pantalonPM2"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gafetePM2')" ondblclick="crossCheckbox('gafetePM2')">
+                        <div class="checkbox" id="gafetePM2"></div>
+                    </td>
+                </tr>
+                <!-- Rows 3-10 following the same pattern -->
+                <tr class="table-row" id="pm-row-3">
+                    <td><input type="text" class="field-input" id="nombrePM3"></td>
+                    <td><input type="text" class="field-input" id="areaPM3"></td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gorraPM3')" ondblclick="crossCheckbox('gorraPM3')">
+                        <div class="checkbox" id="gorraPM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pinPM3')" ondblclick="crossCheckbox('pinPM3')">
+                        <div class="checkbox" id="pinPM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('mandilPM3')" ondblclick="crossCheckbox('mandilPM3')">
+                        <div class="checkbox" id="mandilPM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('playeraPM3')" ondblclick="crossCheckbox('playeraPM3')">
+                        <div class="checkbox" id="playeraPM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('tenisPM3')" ondblclick="crossCheckbox('tenisPM3')">
+                        <div class="checkbox" id="tenisPM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pantalonPM3')" ondblclick="crossCheckbox('pantalonPM3')">
+                        <div class="checkbox" id="pantalonPM3"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gafetePM3')" ondblclick="crossCheckbox('gafetePM3')">
+                        <div class="checkbox" id="gafetePM3"></div>
+                    </td>
+                </tr>
+                <tr class="table-row" id="pm-row-4">
+                    <td><input type="text" class="field-input" id="nombrePM4"></td>
+                    <td><input type="text" class="field-input" id="areaPM4"></td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gorraPM4')" ondblclick="crossCheckbox('gorraPM4')">
+                        <div class="checkbox" id="gorraPM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pinPM4')" ondblclick="crossCheckbox('pinPM4')">
+                        <div class="checkbox" id="pinPM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('mandilPM4')" ondblclick="crossCheckbox('mandilPM4')">
+                        <div class="checkbox" id="mandilPM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('playeraPM4')" ondblclick="crossCheckbox('playeraPM4')">
+                        <div class="checkbox" id="playeraPM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('tenisPM4')" ondblclick="crossCheckbox('tenisPM4')">
+                        <div class="checkbox" id="tenisPM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pantalonPM4')" ondblclick="crossCheckbox('pantalonPM4')">
+                        <div class="checkbox" id="pantalonPM4"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gafetePM4')" ondblclick="crossCheckbox('gafetePM4')">
+                        <div class="checkbox" id="gafetePM4"></div>
+                    </td>
+                </tr>
+                <tr class="table-row" id="pm-row-5">
+                    <td><input type="text" class="field-input" id="nombrePM5"></td>
+                    <td><input type="text" class="field-input" id="areaPM5"></td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('gorraPM5')" ondblclick="crossCheckbox('gorraPM5')">
+                        <div class="checkbox" id="gorraPM5"></div>
+                    </td>
+                    <td class="checkbox-cell" onclick="toggleCheckbox('pinPM5')" ondblclick="crossCheckbox('pinPM5')">
+                        <div class="checkbox" id="pinPM5
